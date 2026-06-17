@@ -32,13 +32,12 @@ public class GameManager : MonoBehaviour
             {
                 g.gameObject.SetActive(false);
             }
+        }
 
         if (powerPelletObject != null)
         {
             powerPelletObject.SetActive(false);
-        }
-        
-        }
+        }  
     }
 
 

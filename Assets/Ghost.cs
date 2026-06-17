@@ -34,9 +34,6 @@ public abstract class Ghost : MonoBehaviour
         {
             agent.speed = normalSpeed;
         }
-
-        if (GhostManager.Instance != null)
-            GhostManager.Instance.RegisterGhost(this);
     }
 
     protected virtual void Update()
