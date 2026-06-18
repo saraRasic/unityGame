@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour
     public GameObject winScreen;
     public GameObject powerPelletObject;
 
+    // --- NOVO: Polja za zvuk otvaranja škrinje ---
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip chestOpenSound;
+    [Range(0f, 1f)] [SerializeField] private float chestVolume = 0.6f;
+
 
     //kako bi mogla pristupiti GameManageru iz drugih skripti (Singleton pattern)
     private void Awake()
@@ -40,8 +45,6 @@ public class GameManager : MonoBehaviour
         }  
     }
 
-
-
     public void AddScore(int amount)
     {
         score += amount;
@@ -66,6 +69,12 @@ public class GameManager : MonoBehaviour
     void WinGame()
     {
         Debug.Log("You've collected all the points and won the game!");
+
+        // --- NOVO: Puštanje zvuka škrinje na poziciji kamere (2D zvuk za igrača) ---
+        if (chestOpenSound != null && Camera.main != null)
+        {
+            AudioSource.PlayClipAtPoint(chestOpenSound, Camera.main.transform.position, chestVolume);
+        }
 
         foreach (Ghost g in ghosts)
         {
@@ -93,7 +102,7 @@ public class GameManager : MonoBehaviour
             if (!powerPelletObject.activeSelf)
             {
                 powerPelletObject.SetActive(true);
-                Debug.Log("PowerPellet apeared on the map");
+                Debug.Log("PowerPellet appeared on the map");
             }
         }
     }
@@ -138,4 +147,3 @@ public class GameManager : MonoBehaviour
         }
     }
 }
-
