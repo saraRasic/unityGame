@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI invisibilityTimerText; 
 
 
-
     void Start()
     {
         chr = GetComponent<CharacterController>();
@@ -89,9 +88,34 @@ public class Player : MonoBehaviour
         }
     }
 
-    //za saferoom
-    private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("SafeRoom")) isSafe = true;
+    // --- PROVJERI SUDARA (Safe Room i Duhovi) ---
+    private void OnTriggerEnter(Collider other) 
+    {
+        // Za safe room
+        if (other.CompareTag("SafeRoom")) 
+        {
+            isSafe = true;
+        }
+
+        // --- NOVO: Detekcija duha ---
+        if (other.CompareTag("Ghost"))
+        {
+            // Duh te može ubiti SAMO ako nisi nevidljiva i ako nisi u Safe Roomu!
+            if (!isInvisible && !isSafe)
+            {
+                Debug.Log("Duh je ulovio igrača!");
+
+                // Pozivamo GameManager da upali Game Over panel i zaustavi igru
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.GameOver();
+                }
+            }
+            else
+            {
+                Debug.Log("Duh te dotaknuo, ali si sigurna (Nevidljivost/SafeRoom)!");
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other) {

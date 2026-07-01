@@ -11,9 +11,10 @@ public class GameManager : MonoBehaviour
     public List<Ghost> ghosts;
     public Chest chest; 
     public GameObject winScreen;
+    public GameObject gameOverScreen; 
     public GameObject powerPelletObject;
 
-    // --- NOVO: Polja za zvuk otvaranja škrinje ---
+
     [Header("Audio Settings")]
     [SerializeField] private AudioClip chestOpenSound;
     [Range(0f, 1f)] [SerializeField] private float chestVolume = 0.6f;
@@ -31,6 +32,8 @@ public class GameManager : MonoBehaviour
     //deaktivira duhove u pocetku igre
     void Start()
     {
+        Time.timeScale = 1f;
+
         foreach (Ghost g in ghosts)
         {
             if (g != null)
@@ -120,14 +123,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    // Kada igrač pobjegne kroz portal na vratima:
     public void PlayerWon()
     {
         if (winScreen != null)
         {
-            winScreen.SetActive(true);
+            winScreen.SetActive(true); // Ovo pali panel, a panel sam pokreće svoj zvučnik!
             Time.timeScale = 0f; 
         }
+        Cursor.lockState = CursorLockMode.None; 
+        Cursor.visible = true;
     }
+
+    // --- Funkcija za poraz (Game Over) ---
+    public void GameOver()
+    {
+        if (gameOverScreen != null)
+        {
+            gameOverScreen.SetActive(true);
+
+
+            Time.timeScale = 0f; 
+        }
+        Cursor.lockState = CursorLockMode.None; // Određuje da miš NIJE zaključan u sredini ekrana
+        Cursor.visible = true;
+    }
+
 
     public void MakeGhostsAggressive()
     {
