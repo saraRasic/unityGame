@@ -6,6 +6,7 @@ public class MainMenu : MonoBehaviour
     // Ova funkcija će se pokrenuti kada igrač klikne gumb IGRAJ
     public void PlayGame()
     {
+        Time.timeScale = 1f;
         // Učitava scenu s labirintom prema točnom imenu s tvoje slike
         SceneManager.LoadScene("Pacman Game"); 
     }
@@ -13,6 +14,7 @@ public class MainMenu : MonoBehaviour
     // Ova funkcija će te vratiti na početni zaslon
     public void GoToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu"); // Pazi da se scena u Scenes mapi zove točno "MainMenu"
     }
 

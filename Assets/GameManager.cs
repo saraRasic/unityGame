@@ -124,14 +124,24 @@ public class GameManager : MonoBehaviour
     }
 
 
-    // Kada igrač pobjegne kroz portal na vratima:
+// Kada igrač pobjegne kroz portal na vratima:
     public void PlayerWon()
     {
         if (winScreen != null)
         {
-            winScreen.SetActive(true); // Ovo pali panel, a panel sam pokreće svoj zvučnik!
-            Time.timeScale = 0f; 
+            winScreen.SetActive(true); 
+            // Time.timeScale = 0f; // Maknuli smo ovo da ne zamrzne gumbe!
         }
+        
+        // Isključujemo skriptu za kretanje igrača tako da on stane na mjestu
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            // Ako ti se skripta za kretanje zove drugačije (npr. PlayerController), promijeni ime unutar <>
+            var movementScript = player.GetComponent<MonoBehaviour>(); 
+            if (movementScript != null) movementScript.enabled = false;
+        }
+
         Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
     }
@@ -142,14 +152,20 @@ public class GameManager : MonoBehaviour
         if (gameOverScreen != null)
         {
             gameOverScreen.SetActive(true);
-
-
-            Time.timeScale = 0f; 
+            // Time.timeScale = 0f; // Maknuli smo ovo da ne zamrzne gumbe!
         }
-        Cursor.lockState = CursorLockMode.None; // Određuje da miš NIJE zaključan u sredini ekrana
+
+        // Isključujemo skriptu za kretanje igrača da ne može hodati dok gleda Game Over ekran
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            var movementScript = player.GetComponent<MonoBehaviour>();
+            if (movementScript != null) movementScript.enabled = false;
+        }
+
+        Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
     }
-
 
     public void MakeGhostsAggressive()
     {
