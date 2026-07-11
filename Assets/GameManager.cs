@@ -13,9 +13,10 @@ public class GameManager : MonoBehaviour
     public GameObject winScreen;
     public GameObject gameOverScreen; 
     public GameObject powerPelletObject;
+    public GameObject portalVrata; // Ovdje ćemo ubaciti objekt vrata iz Hierarchyja
 
 
-    [Header("Audio Settings")]
+
     [SerializeField] private AudioClip chestOpenSound;
     [Range(0f, 1f)] [SerializeField] private float chestVolume = 0.6f;
 
@@ -130,21 +131,36 @@ public class GameManager : MonoBehaviour
         if (winScreen != null)
         {
             winScreen.SetActive(true); 
-            // Time.timeScale = 0f; // Maknuli smo ovo da ne zamrzne gumbe!
+        }
+
+        // 1. NOVO: Gasimo objekt vrata kako bi se ugasio i njihov zvuk!
+        if (portalVrata != null)
+        {
+            portalVrata.SetActive(false);
         }
         
-        // Isključujemo skriptu za kretanje igrača tako da on stane na mjestu
+        // 1. Isključujemo skriptu za kretanje igrača tako da on stane
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            // Ako ti se skripta za kretanje zove drugačije (npr. PlayerController), promijeni ime unutar <>
             var movementScript = player.GetComponent<MonoBehaviour>(); 
             if (movementScript != null) movementScript.enabled = false;
         }
 
+        // 2. NOVO: Gasimo sve duhove u labirintu da ne mogu napasti igrača
+        foreach (Ghost g in ghosts)
+        {
+            if (g != null)
+            {
+                g.gameObject.SetActive(false); // Ovo ih potpuno sklanja s mape
+            }
+        }
+
+        // 3. Oslobađamo kursor miša za klikanje na gumbe
         Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
     }
+
 
     // --- Funkcija za poraz (Game Over) ---
     public void GameOver()

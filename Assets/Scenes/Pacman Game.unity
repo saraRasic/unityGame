@@ -19762,6 +19762,7 @@ MonoBehaviour:
   winScreen: {fileID: 1155665949}
   gameOverScreen: {fileID: 26368652}
   powerPelletObject: {fileID: 1274126051}
+  portalVrata: {fileID: 1531395827}
   chestOpenSound: {fileID: 8300000, guid: 9ace2afce4c6243baa1a40babd97d524, type: 3}
   chestVolume: 1
 --- !u!4 &1643016090
