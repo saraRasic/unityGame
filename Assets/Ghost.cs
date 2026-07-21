@@ -17,6 +17,9 @@ public abstract class Ghost : MonoBehaviour
     public float normalSpeed = 3.5f;     // Brzina kojom duh inače hoda
     public float aggressiveSpeed = 5.5f; // Brzina kad igrač uzme ključ (Blinky mod)
 
+    public int pointsToWakeUp; // Koliko bodova igrač mora imati da se ovaj duh probudi
+    private bool isAwake = false; // Prati je li se duh već probudio
+
 
     protected virtual void Start()
     {
@@ -36,8 +39,31 @@ public abstract class Ghost : MonoBehaviour
         }
     }
 
+
     protected virtual void Update()
     {
+        // --- NOVI DIO: PROVJERA BODOVA ZA BUĐENJE ---
+        if (!isAwake)
+        {
+            // VAŽNO: Zamijeni 'score' s točnim nazivom varijable za bodove iz tvog GameManagera (npr. points, currentScore...)
+            if (GameManager.Instance != null && GameManager.Instance.score >= pointsToWakeUp)
+            {
+                isAwake = true; // Duh se budi!
+                GameManager.Instance.ShowSpawnMessage(gameObject.name); // Ispisuje se poruka
+            }
+            else
+            {
+                // Ako još nema dovoljno bodova, samo drži duha na homePointu i ne daj mu da ide dalje
+                if (homePoint != null)
+                {
+                    agent.SetDestination(homePoint.position);
+                }
+                return; // Zaustavlja Update ovdje, duh još ne kreće u igru!
+            }
+        }
+        // --------------------------------------------
+
+        // --- TVOJ POSTOJEĆI KOD (Ostaje potpuno isti) ---
         //ako je igrac u saferoomu ili nevidljiv duh se vraca na home point
         if (playerScript != null && (playerScript.isSafe || playerScript.isInvisible)) 
         {

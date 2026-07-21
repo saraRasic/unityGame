@@ -13,15 +13,16 @@ public class GameManager : MonoBehaviour
     public GameObject winScreen;
     public GameObject gameOverScreen; 
     public GameObject powerPelletObject;
-    public GameObject portalVrata; // Ovdje ćemo ubaciti objekt vrata iz Hierarchyja
-
-
+    public GameObject portalVrata; 
+    public TextMeshProUGUI notificationText; 
 
     [SerializeField] private AudioClip chestOpenSound;
     [Range(0f, 1f)] [SerializeField] private float chestVolume = 0.6f;
 
+    [Header("Music Settings")]
+    public AudioSource initialBGM;     // Stara/početna glazba u igri
+    public AudioSource bgmAudioSource; // Nova glazba koja svira kad se uzme ključ
 
-    //kako bi mogla pristupiti GameManageru iz drugih skripti (Singleton pattern)
     private void Awake()
     {
         if (Instance == null)
@@ -30,7 +31,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    //deaktivira duhove u pocetku igre
     void Start()
     {
         Time.timeScale = 1f;
@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         if (score >= 160)
         {
             WinGame();
+            if (Tasks.Instance != null) Tasks.Instance.CompletePointsTask();
         }
     }
 
@@ -74,7 +75,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("You've collected all the points and won the game!");
 
-        // --- NOVO: Puštanje zvuka škrinje na poziciji kamere (2D zvuk za igrača) ---
         if (chestOpenSound != null && Camera.main != null)
         {
             AudioSource.PlayClipAtPoint(chestOpenSound, Camera.main.transform.position, chestVolume);
@@ -96,10 +96,10 @@ public class GameManager : MonoBehaviour
 
     void CheckGhostActivation()
     {
-        if (score >= 40) ActivateGhost(0);  //Clyde
-        if (score >= 80) ActivateGhost(1);  //Inky
-        if (score >= 120) ActivateGhost(2); //Pinky
-        if (score >= 150) ActivateGhost(3); //Blinky
+        if (score >= 40) ActivateGhost(0);  // Clyde
+        if (score >= 80) ActivateGhost(1);  // Inky
+        if (score >= 120) ActivateGhost(2); // Pinky
+        if (score >= 140) ActivateGhost(3); // Blinky
 
         if (score >= 40 && powerPelletObject != null)
         {
@@ -124,22 +124,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-// Kada igrač pobjegne kroz portal na vratima:
     public void PlayerWon()
     {
         if (winScreen != null)
         {
             winScreen.SetActive(true); 
+            if (Tasks.Instance != null) 
+            {
+                Tasks.Instance.HideTasks(); 
+            }
         }
 
-        // 1. NOVO: Gasimo objekt vrata kako bi se ugasio i njihov zvuk!
+        // Zaustavljamo pozadinsku glazbu
+        if (initialBGM != null) initialBGM.Stop();
+        if (bgmAudioSource != null) bgmAudioSource.Stop();
+
+        // --- NOVO: Gašenje svih zvukova duhova ---
+        StopAllGhostSounds();
+
         if (portalVrata != null)
         {
             portalVrata.SetActive(false);
         }
         
-        // 1. Isključujemo skriptu za kretanje igrača tako da on stane
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -147,20 +154,17 @@ public class GameManager : MonoBehaviour
             if (movementScript != null) movementScript.enabled = false;
         }
 
-        // 2. NOVO: Gasimo sve duhove u labirintu da ne mogu napasti igrača
         foreach (Ghost g in ghosts)
         {
             if (g != null)
             {
-                g.gameObject.SetActive(false); // Ovo ih potpuno sklanja s mape
+                g.gameObject.SetActive(false); 
             }
         }
 
-        // 3. Oslobađamo kursor miša za klikanje na gumbe
         Cursor.lockState = CursorLockMode.None; 
         Cursor.visible = true;
     }
-
 
     // --- Funkcija za poraz (Game Over) ---
     public void GameOver()
@@ -168,10 +172,19 @@ public class GameManager : MonoBehaviour
         if (gameOverScreen != null)
         {
             gameOverScreen.SetActive(true);
-            // Time.timeScale = 0f; // Maknuli smo ovo da ne zamrzne gumbe!
+            if (Tasks.Instance != null) 
+            {
+                Tasks.Instance.HideTasks(); 
+            }
         }
 
-        // Isključujemo skriptu za kretanje igrača da ne može hodati dok gleda Game Over ekran
+        // Zaustavljamo pozadinsku glazbu
+        if (initialBGM != null) initialBGM.Stop();
+        if (bgmAudioSource != null) bgmAudioSource.Stop();
+
+        // --- NOVO: Gašenje svih zvukova duhova na Game Overu ---
+        StopAllGhostSounds();
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -183,6 +196,30 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
 
+    // --- NOVO: Pomoćna funkcija koja gasi zvuke na svim duhovima ---
+    private void StopAllGhostSounds()
+    {
+        foreach (Ghost g in ghosts)
+        {
+            if (g != null)
+            {
+                // Zaustavlja AudioSource komponente ako ih duh ima na sebi
+                AudioSource[] ghostAudioSources = g.GetComponents<AudioSource>();
+                foreach (AudioSource audio in ghostAudioSources)
+                {
+                    audio.Stop();
+                }
+
+                // Dodatno zaustavlja zvukove i ako se nalaze na djeci (child objektima) duha
+                AudioSource[] childAudioSources = g.GetComponentsInChildren<AudioSource>();
+                foreach (AudioSource audio in childAudioSources)
+                {
+                    audio.Stop();
+                }
+            }
+        }
+    }
+
     public void MakeGhostsAggressive()
     {
         Debug.Log("Key collected! Making ghosts aggressive and faster");
@@ -191,13 +228,38 @@ public class GameManager : MonoBehaviour
         {
             if (g != null)
             {
-                // 1. Ponovno upali objekt duha u igri
                 g.gameObject.SetActive(true);
                 g.enabled = true;
-
-                // 2. Prebaci ga u brzi/agresivni mod koji smo ranije napravili
                 g.SetAggressiveMode(true);
             }
+        }
+
+        if (initialBGM != null)
+        {
+            initialBGM.Stop(); 
+        }
+
+        if (bgmAudioSource != null)
+        {
+            bgmAudioSource.Play(); 
+        }
+    }
+
+    public void ShowSpawnMessage(string ghostName)
+    {
+        if (notificationText != null)
+        {
+            notificationText.text += ghostName + " spawned!\n";
+            CancelInvoke("ClearNotificationText"); 
+            Invoke("ClearNotificationText", 3f);
+        }
+    }
+
+    void ClearNotificationText()
+    {
+        if (notificationText != null)
+        {
+            notificationText.text = ""; 
         }
     }
 }

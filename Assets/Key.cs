@@ -47,10 +47,13 @@ public class Key : MonoBehaviour
             {
                 GameManager.Instance.MakeGhostsAggressive();
             }
+            
 
             Debug.Log("Key collected");
             
             Destroy(gameObject);
+
+            if (Tasks.Instance != null) Tasks.Instance.CompleteKeyTask();
         }
     }
 }

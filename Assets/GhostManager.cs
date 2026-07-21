@@ -17,6 +17,9 @@ public class GhostManager : MonoBehaviour
     public void RegisterGhost(Ghost ghost)
     {
         if (!allGhosts.Contains(ghost))
+        {
             allGhosts.Add(ghost);
+            // Maknuli smo slanje poruke odavde!
+        }
     }
 }
