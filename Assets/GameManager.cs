@@ -139,7 +139,6 @@ public class GameManager : MonoBehaviour
         if (initialBGM != null) initialBGM.Stop();
         if (bgmAudioSource != null) bgmAudioSource.Stop();
 
-        // --- NOVO: Gašenje svih zvukova duhova ---
         StopAllGhostSounds();
 
         if (portalVrata != null)
@@ -166,7 +165,7 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
 
-    // --- Funkcija za poraz (Game Over) ---
+    // game over funkcija 
     public void GameOver()
     {
         if (gameOverScreen != null)
@@ -182,7 +181,6 @@ public class GameManager : MonoBehaviour
         if (initialBGM != null) initialBGM.Stop();
         if (bgmAudioSource != null) bgmAudioSource.Stop();
 
-        // --- NOVO: Gašenje svih zvukova duhova na Game Overu ---
         StopAllGhostSounds();
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -196,7 +194,6 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
 
-    // --- NOVO: Pomoćna funkcija koja gasi zvuke na svim duhovima ---
     private void StopAllGhostSounds()
     {
         foreach (Ghost g in ghosts)

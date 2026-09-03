@@ -19,7 +19,6 @@ public class Tasks : MonoBehaviour
 
     void Start()
     {
-        // Skripta sama uzima TextMeshPro komponentu s istog objekta
         taskText = GetComponent<TextMeshProUGUI>();
 
         if (taskText == null)
@@ -57,7 +56,7 @@ public class Tasks : MonoBehaviour
         taskText.text = text; 
     }
 
-    // --- FUNKCIJE ZA KRIŽANJE ZADATAKA (Pozivaš ih iz drugih skripti) ---
+    // FUNKCIJE ZA KRIŽANJE ZADATAKA 
 
     // Pozovi ovo kada igrač skupi 160 bodova
     public void CompletePointsTask()

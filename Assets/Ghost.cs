@@ -32,7 +32,6 @@ public abstract class Ghost : MonoBehaviour
         if (GhostManager.Instance != null)
             GhostManager.Instance.RegisterGhost(this);
         
-        // --- NOVO: Postavi početnu brzinu agenta na normalnu ---
         if (agent != null)
         {
             agent.speed = normalSpeed;
@@ -42,28 +41,23 @@ public abstract class Ghost : MonoBehaviour
 
     protected virtual void Update()
     {
-        // --- NOVI DIO: PROVJERA BODOVA ZA BUĐENJE ---
         if (!isAwake)
         {
-            // VAŽNO: Zamijeni 'score' s točnim nazivom varijable za bodove iz tvog GameManagera (npr. points, currentScore...)
             if (GameManager.Instance != null && GameManager.Instance.score >= pointsToWakeUp)
             {
-                isAwake = true; // Duh se budi!
+                isAwake = true;
                 GameManager.Instance.ShowSpawnMessage(gameObject.name); // Ispisuje se poruka
             }
             else
             {
-                // Ako još nema dovoljno bodova, samo drži duha na homePointu i ne daj mu da ide dalje
                 if (homePoint != null)
                 {
                     agent.SetDestination(homePoint.position);
                 }
-                return; // Zaustavlja Update ovdje, duh još ne kreće u igru!
+                return; 
             }
         }
-        // --------------------------------------------
 
-        // --- TVOJ POSTOJEĆI KOD (Ostaje potpuno isti) ---
         //ako je igrac u saferoomu ili nevidljiv duh se vraca na home point
         if (playerScript != null && (playerScript.isSafe || playerScript.isInvisible)) 
         {
@@ -85,16 +79,13 @@ public abstract class Ghost : MonoBehaviour
     protected abstract void UpdateDestination();
 
 
-    // --- NOVO: Metoda koju će GameManager pozvati da razljuti duha ---
     public void SetAggressiveMode(bool startAggressive)
     {
         if (agent != null)
         {
-            // Ako je startAggressive true, stavi veću brzinu, inače vrati na normalnu
             agent.speed = startAggressive ? aggressiveSpeed : normalSpeed;
             
-            // Ovdje u budućnosti možeš promijeniti i boju očiju/materijal duha ako želiš!
-            Debug.Log(gameObject.name + " brzina promijenjena na: " + agent.speed);
+            Debug.Log(gameObject.name + " speed changed to: " + agent.speed);
         }
     }
 }

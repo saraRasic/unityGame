@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Clyde : Ghost
 {
-    //ovaj duh ganja igraca dok mu se ne priblizi i cim dode dovoljno blizu bjezi na svoj homepoint
     public float scatterDistance = 8f; //udaljenost od igraca na kojoj krene bjezati
 
     protected override void UpdateDestination()

@@ -23,11 +23,7 @@ public class Inky : Ghost
             Vector3 target = player.position + (player.right + player.forward).normalized * flankDistance;
             agent.SetDestination(target);
 
-            //float strana = (Random.value > 0.5f) ? 1f : -1f; 
 
-            //ako je strana 1, ide desno. Ako je -1, ide lijevo 
-            //Vector3 target = player.position + (player.forward + player.right * strana).normalized * flankDistance;
-            //agent.SetDestination(target);
         }
     }
 }

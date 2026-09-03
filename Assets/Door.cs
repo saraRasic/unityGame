@@ -13,13 +13,11 @@ public class Door : MonoBehaviour
         if (closedVisual != null) closedVisual.SetActive(true);
         if (openedVisual != null) openedVisual.SetActive(false);
 
-        // Kod traži AudioSource na objektu koji glumi otvorena vrata
         if (openedVisual != null)
         {
             portalAudio = openedVisual.GetComponent<AudioSource>();
         }
         
-        // Ako ga slučajno nema tamo, provjeri samog sebe za svaki slučaj
         if (portalAudio == null)
         {
             portalAudio = GetComponent<AudioSource>();

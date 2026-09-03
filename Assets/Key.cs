@@ -9,7 +9,6 @@ public class Key : MonoBehaviour
     private Vector3 startPos;
     public Door door; 
 
-    // --- NOVO: Polja za zvuk ključa i njegovu glasnoću ---
     [Header("Audio Settings")]
     [SerializeField] private AudioClip keyPickupSound;
     [Range(0f, 1f)] [SerializeField] private float volume = 0.5f;
@@ -31,7 +30,6 @@ public class Key : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // --- NOVO: Odsviraj zvuk na poziciji ključa prije uništenja ---
             if (keyPickupSound != null)
             {
                 AudioSource.PlayClipAtPoint(keyPickupSound, transform.position, volume);
@@ -42,7 +40,6 @@ public class Key : MonoBehaviour
                 door.OpenDoor();
             }
 
-            // --- Pozivamo GameManager da ubrza i razljuti duhove ---
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.MakeGhostsAggressive();

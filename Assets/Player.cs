@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    // --- PROVJERI SUDARA (Safe Room i Duhovi) ---
+    // safe room i duhovi
     private void OnTriggerEnter(Collider other) 
     {
         // Za safe room
@@ -97,15 +97,12 @@ public class Player : MonoBehaviour
             isSafe = true;
         }
 
-        // --- NOVO: Detekcija duha ---
         if (other.CompareTag("Ghost"))
         {
-            // Duh te može ubiti SAMO ako nisi nevidljiva i ako nisi u Safe Roomu!
             if (!isInvisible && !isSafe)
             {
-                Debug.Log("Duh je ulovio igrača!");
+                Debug.Log("Ghost caught player");
 
-                // Pozivamo GameManager da upali Game Over panel i zaustavi igru
                 if (GameManager.Instance != null)
                 {
                     GameManager.Instance.GameOver();
@@ -113,7 +110,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                Debug.Log("Duh te dotaknuo, ali si sigurna (Nevidljivost/SafeRoom)!");
+                Debug.Log("Ghost caught player");
             }
         }
     }
